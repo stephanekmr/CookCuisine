@@ -1,0 +1,20 @@
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\bin\Debug\CookCuisine.exe.config
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\bin\Debug\CookCuisine.exe
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\bin\Debug\CookCuisine.pdb
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\obj\Debug\CookCuisine.csproj.AssemblyReference.cache
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\obj\Debug\CookCuisine.Form1.resources
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\obj\Debug\CookCuisine.Properties.Resources.resources
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\obj\Debug\CookCuisine.csproj.GenerateResource.cache
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\obj\Debug\CookCuisine.csproj.CoreCompileInputs.cache
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\obj\Debug\CookCuisine.exe
+D:\MIAGE\Programmation interface\CookCuisine\CookCuisine\obj\Debug\CookCuisine.pdb
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\bin\Debug\CookCuisine.exe.config
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\bin\Debug\CookCuisine.exe
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\bin\Debug\CookCuisine.pdb
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\obj\Debug\CookCuisine.csproj.AssemblyReference.cache
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\obj\Debug\CookCuisine.Form1.resources
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\obj\Debug\CookCuisine.Properties.Resources.resources
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\obj\Debug\CookCuisine.csproj.GenerateResource.cache
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\obj\Debug\CookCuisine.csproj.CoreCompileInputs.cache
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\obj\Debug\CookCuisine.exe
+C:\Users\secours\Downloads\test\CookCuisine\CookCuisine\obj\Debug\CookCuisine.pdb
