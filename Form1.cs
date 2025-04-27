@@ -5,13 +5,33 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using static CookCuisine.principalForm;
 
 namespace CookCuisine
 {
     public partial class principalForm : Form
     {
+
+        [Serializable]
+        public class CuisineState
+        {
+            public Size CuisineSize { get; set; }
+            public List<MeubleState> Meubles { get; set; } = new List<MeubleState>();
+        }
+
+        [Serializable]
+        public class MeubleState
+        {
+            public string Type { get; set; }
+            public string Nom { get; set; }
+            public Size Taille { get; set; }
+            public Point Position { get; set; }
+            public float Rotation { get; set; } = 0f;
+        }
+
         // Variables et objets utiles
         private int buttonCounter = 1;
         private bool isDragging = false;
@@ -73,11 +93,6 @@ namespace CookCuisine
             //CreateAddFurnitureButtons();
             CreateMeubleCategories();
 
-            //Initialiser les événements pour le redimensionnement
-            //zoneCuisine.MouseDown += zoneCuisine_MouseDown;
-            //zoneCuisine.MouseMove += zoneCuisine_MouseMove;
-            //zoneCuisine.MouseUp += zoneCuisine_MouseUp;
-            //zoneCuisine.Paint += zoneCuisine_Paint;
         }
 
         private void SetupUI()
@@ -210,12 +225,14 @@ namespace CookCuisine
             this.load.Name = "load";
             this.load.Size = new System.Drawing.Size(139, 22);
             this.load.Text = "Charger";
+            this.load.Click += new System.EventHandler(this.load_Click);
             // 
             // save
             // 
             this.save.Name = "save";
             this.save.Size = new System.Drawing.Size(139, 22);
             this.save.Text = "Sauvegarder";
+            this.save.Click += new System.EventHandler(this.save_Click);
             // 
             // quitter
             // 
@@ -1004,6 +1021,132 @@ namespace CookCuisine
                 }
             }
         }
+
+        private void save_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Fichier Cuisine (*.ccs)|*.ccs";
+            saveFileDialog.Title = "Sauvegarder la cuisine";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    CuisineState etatCuisine = new CuisineState
+                    {
+                        CuisineSize = zoneCuisine.Size
+                    };
+
+                    // Récupérer tous les meubles dans la zone cuisine
+                    foreach (Control ctrl in cuisinePanel.Controls)
+                    {
+                        if (ctrl is Button btn && btn.Name.StartsWith("btn_"))
+                        {
+                            etatCuisine.Meubles.Add(new MeubleState
+                            {
+                                Type = (string)btn.Tag,
+                                Nom = btn.Name,
+                                Taille = btn.Size,
+                                Position = btn.Location
+                                // Note: Vous devrez ajouter la rotation si vous l'implémentez
+                            });
+                        }
+                    }
+
+                    // Sérialiser et sauvegarder
+                    using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.Serialize(fs, etatCuisine);
+                    }
+
+                    MessageBox.Show("Cuisine sauvegardée avec succès!", "Sauvegarde", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erreur lors de la sauvegarde: {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void load_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Fichier Cuisine (*.ccs)|*.ccs";
+            openFileDialog.Title = "Charger une cuisine";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    CuisineState etatCuisine;
+
+                    // Désérialiser le fichier
+                    using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        etatCuisine = (CuisineState)formatter.Deserialize(fs);
+                    }
+
+                    // Appliquer l'état chargé
+                    zoneCuisine.Size = etatCuisine.CuisineSize;
+                    zoneCuisineBaseSize = zoneCuisine.Size;
+                    gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
+
+                    // Supprimer les meubles existants
+                    List<Control> controlsASupprimer = new List<Control>();
+                    foreach (Control ctrl in cuisinePanel.Controls)
+                    {
+                        if (ctrl is Button btn && btn.Name.StartsWith("btn_"))
+                        {
+                            controlsASupprimer.Add(ctrl);
+                        }
+                    }
+                    foreach (Control ctrl in controlsASupprimer)
+                    {
+                        cuisinePanel.Controls.Remove(ctrl);
+                        ctrl.Dispose();
+                    }
+
+                    // Recréer les meubles sauvegardés
+                    foreach (var meubleState in etatCuisine.Meubles)
+                    {
+                        if (meubles.TryGetValue(meubleState.Type, out var properties) &&
+                            meubleImages.TryGetValue(meubleState.Type, out var image))
+                        {
+                            Button newButton = new Button
+                            {
+                                Name = meubleState.Nom,
+                                Text = "",
+                                Size = meubleState.Taille,
+                                Location = meubleState.Position,
+                                FlatStyle = FlatStyle.Flat,
+                                Tag = meubleState.Type,
+                                Image = ResizeImage(image, meubleState.Taille),
+                                BackgroundImageLayout = ImageLayout.Stretch,
+                                BackColor = Color.Transparent
+                            };
+
+                            SetupButton(newButton);
+                            cuisinePanel.Controls.Add(newButton);
+                            newButton.BringToFront();
+
+                            // Mettre à jour le dictionnaire de positions
+                            meublesPositions[newButton.Name] = meubleState.Position;
+
+                            // Si vous avez implémenté la rotation, l'appliquer ici
+                        }
+                    }
+
+                    MessageBox.Show("Cuisine chargée avec succès!", "Chargement", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erreur lors du chargement: {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
         private void textBoxDimension_Leave(object sender, EventArgs e)
         {
             if (int.TryParse(width_texbox.Text, out int newWidth) && int.TryParse(height_texbox.Text, out int newHeight))
