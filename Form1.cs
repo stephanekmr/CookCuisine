@@ -48,12 +48,15 @@ namespace CookCuisine
         {
             new CategorieMeuble("Chaises", new Size(60, 80), "chaises_modele.jpg"),
             new CategorieMeuble("Tables", new Size(120, 70), "table.png"),
-            new CategorieMeuble("Canapés", new Size(80, 120), "canape_blanc.png"),
-            new CategorieMeuble("Microondes", new Size(80, 120), "microondes_modele.jpg"),
+            //new CategorieMeuble("Canapés", new Size(80, 120), "canape_blanc.png"),
+            //new CategorieMeuble("Microondes", new Size(80, 120), "microondes_modele.jpg"),
             //new CategorieMeuble("Plan_de_travail", new Size(80, 120), ""),
             new CategorieMeuble("Armoires", new Size(80, 120), "armoires_modele.jpg"),
             new CategorieMeuble("Eviers", new Size(80, 120), "evier_00.png"),
-            new CategorieMeuble("Cuisinières", new Size(80, 76), "cuisinière_modele.jpg"),
+            new CategorieMeuble("Cuisinières", new Size(80, 76), "cuisiniere_abc.png"),
+            new CategorieMeuble("Fours", new Size(80, 76), "cuisinière_modele.jpg"),
+            new CategorieMeuble("Tiroirs", new Size(198, 50), "commode.png"),
+            new CategorieMeuble("Plan de travail", new Size(300, 50), "PlanTravail.png"),
             new CategorieMeuble("Frigos", new Size(80, 120), "frigo_modele.jpg")
         };
 
@@ -61,17 +64,22 @@ namespace CookCuisine
         private Dictionary<string, Meuble> meubles = new Dictionary<string, Meuble>()
         {
             {"Chaise", new Meuble("Chaises", "Chaise", new Size(60, 80), new Point(20, 20), "chair.png")},
+            {"Chaise2", new Meuble("Chaises", "Chaise", new Size(60, 80), new Point(20, 20), "chaises_modele.jpg")},
             {"Table", new Meuble("Tables", "Table", new Size(120, 70), new Point(20, 20), "table.png")},
-            {"sofa", new Meuble("Canapés", "sofa", new Size(150, 80), new Point(20, 20), "sofa.png")},
-            {"Armoire", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "wardrobe.png")},
-            {"Armoire2", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "wardrobe.png")},
-            {"Armoire3", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "wardrobe.png")},
-            {"Armoire4", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "wardrobe.png")},
-            {"Armoire5", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "wardrobe.png")},
-            {"Armoire6", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "wardrobe.png")},
+            //{"sofa", new Meuble("Canapés", "sofa", new Size(150, 80), new Point(20, 20), "sofa.png")},
+            {"Armoire", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
+            {"Armoire2", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
+            {"Armoire3", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
+            {"Armoire4", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
+            {"Armoire5", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
+            {"Armoire6", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
+            {"Four", new Meuble("Fours", "Fours", new Size(80, 80), new Point(20, 20), "cuisinière_modele.jpg")},
             {"evier_00", new Meuble("Eviers", "evier_00", new Size(73, 41), new Point(20, 20), "evier_00.png")},
+            {"Tiroirs", new Meuble("Tiroirs", "Tiroirs", new Size(73, 41), new Point(20, 20), "commode.png")},
+            {"Frigo 1", new Meuble("Frigos", "Frigos", new Size(80, 80), new Point(20, 20), "frigo_modele.jpg")},
+            {"Plan de travail 1", new Meuble("Plan de travail", "Plan de travail", new Size(150, 50), new Point(20, 20), "PlanTravail.png")},
             {"cuisiniere_abc", new Meuble("Cuisinières", "cuisiniere_abc", new Size(80, 76), new Point(20, 20), "cuisiniere_abc.png")},
-            {"Canape_blanc", new Meuble("Canapés", "Canape_blanc", new Size(158, 86), new Point(20, 20), "canape_blanc.png")}
+            //{"Canape_blanc", new Meuble("Canapés", "Canape_blanc", new Size(158, 86), new Point(20, 20), "canape_blanc.png")}
         };
 
         // Dictionnaire pour stocker les images de meubles chargées
