@@ -616,8 +616,8 @@ namespace CookCuisine
         private void CreateMeubleCategories()
         {
             backButton.Enabled = false;
-            meublesPanel.Controls.Clear(); // Vider le menu
-            showCat = true; // On affiche les categories
+            meublesPanel.Controls.Clear(); 
+            showCat = true; 
             meublesPanel.Controls.Clear();
             meublesPanel.AutoScroll = true;
             meublesPanel.VerticalScroll.Enabled = true;
@@ -629,10 +629,7 @@ namespace CookCuisine
 
             foreach (var categorie in categoriesMeubles.OrderBy(m => m.Type))
             {
-                // Vérifier si une image existe pour cette catégorie
                 Image image = catMeubleImages[categorie.Type];
-
-                // Créer le bouton
                 Button meubleCatBtn = new Button
                 {
                     Name = $"cat_meuble_btn_{categorie.Type}",
@@ -646,14 +643,10 @@ namespace CookCuisine
                     TextAlign = ContentAlignment.MiddleCenter,
                     ImageAlign = ContentAlignment.TopLeft
                 };
-                // Ajouter l'événement de clic
                 meubleCatBtn.Click += (sender, e) => CreateAddFurnitureButtons(categorie.Type);
-                // Ajouter le bouton au panel
                 meublesPanel.Controls.Add(meubleCatBtn);
                 yPosition += meubleCatBtn.Height + meubleCatBtn.Height / 5;
             }
-
-            // Mettre à jour la taille minimale de défilement
             meublesPanel.AutoScrollMinSize = new Size(0, yPosition);
         }
 
@@ -671,10 +664,8 @@ namespace CookCuisine
                 {
                     btn.Size = new Size(buttonWidth, buttonHeight);
                     btn.Location = new Point(xPosition, yPosition);
-                    // Ajuster taille police
                     float newFontSize = Math.Min(btn.Height * 0.175f, 11);
                     btn.Font = new Font(btn.Font.FontFamily, newFontSize, FontStyle.Regular);
-                    // Ajuster la taille de l'image du bouton
                     btn.Image = ResizeImage(catMeubleImages[(string)btn.Tag], new Size(btn.Height, btn.Height));
                     btn.TextImageRelation = TextImageRelation.ImageBeforeText;
                     btn.TextAlign = ContentAlignment.MiddleCenter;
@@ -689,8 +680,8 @@ namespace CookCuisine
         private void CreateAddFurnitureButtons(String categorie)
         {
             backButton.Enabled = true;
-            meublesPanel.Controls.Clear(); // Vider le menu
-            showCat = false; // On affiche les meubles
+            meublesPanel.Controls.Clear();
+            showCat = false;
             meublesPanel.AutoScroll = true;
             meublesPanel.VerticalScroll.Enabled = true;
             meublesPanel.VerticalScroll.Visible = true;
@@ -704,7 +695,6 @@ namespace CookCuisine
                 if (meubleImages.TryGetValue(meuble.Key, out var image) && meubles[meuble.Key].Type == categorie
                     && meubles.TryGetValue(meuble.Key, out var meubleData) && meubleData.Type == categorie)
                 {
-                    // Créer le bouton
                     Button addButton = new Button
                     {
                         Name = $"add_Button_{meuble.Key}",
@@ -718,15 +708,11 @@ namespace CookCuisine
                         TextAlign = ContentAlignment.MiddleCenter,
                         ImageAlign = ContentAlignment.TopLeft
                     };
-                    // Ajouter l'événement de clic
                     addButton.Click += AddFurnitureButton_Click;
-                    // Ajouter le bouton au panel
                     meublesPanel.Controls.Add(addButton);
                     yPosition += addButton.Height + addButton.Height/5;
                 }
             }
-
-            // Mettre à jour la taille minimale de défilement
             meublesPanel.AutoScrollMinSize = new Size(0, yPosition);
         }
 
@@ -896,14 +882,10 @@ namespace CookCuisine
         {
             if (isDragging && draggedButton != null)
             {
-                // Obtenir la position de la souris par rapport à cuisinePanel
                 Point mousePosInZone = cuisinePanel.PointToClient(Control.MousePosition);
                 Point newLocation = new Point(mousePosInZone.X - offset.X, mousePosInZone.Y - offset.Y);
                 draggedButton.Location = newLocation;
-                //meubles[(string)draggedButton.Tag].Location = newLocation;
                 meublesPositions[draggedButton.Name] = newLocation;
-
-                // Vérifier si le bouton est entièrement dans cuisinePanel
                 checkMeubleDansCuisine(draggedButton);
             }
         }
@@ -913,11 +895,11 @@ namespace CookCuisine
         {
             if (objetEstDansContainer(zoneCuisine, meuble))
             {
-                meuble.ForeColor = Color.Black; // le contour devient noir
+                meuble.ForeColor = Color.Black;
             }
             else
             {
-                meuble.ForeColor = Color.Red; // le contour devient rouge
+                meuble.ForeColor = Color.Red;
             }
 
         }
@@ -985,7 +967,6 @@ namespace CookCuisine
             }
         }
 
-
         // Bouton pour quitter l'application
         private void quitter_Click(object sender, EventArgs e)
         {
@@ -1022,7 +1003,6 @@ namespace CookCuisine
                 {
                     Size newSize = new Size(newWidth, newHeight);
                     this.zoneCuisine.Size = newSize;
-                    // Mettre à jour la position du gripItem
                     gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
                     zoneCuisineBaseSize = zoneCuisine.Size;
                     menuBar.Focus();
@@ -1045,7 +1025,7 @@ namespace CookCuisine
                         CuisineSize = zoneCuisine.Size
                     };
 
-                    // Récupérer tous les meubles dans la zone cuisine
+
                     foreach (Control ctrl in cuisinePanel.Controls)
                     {
                         if (ctrl is Button btn && btn.Name.StartsWith("btn_"))
@@ -1056,12 +1036,10 @@ namespace CookCuisine
                                 Nom = btn.Name,
                                 Taille = btn.Size,
                                 Position = btn.Location
-                                // Note: Vous devrez ajouter la rotation si vous l'implémentez
                             });
                         }
                     }
 
-                    // Sérialiser et sauvegarder
                     using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
                     {
                         BinaryFormatter formatter = new BinaryFormatter();
@@ -1089,19 +1067,16 @@ namespace CookCuisine
                 {
                     CuisineState etatCuisine;
 
-                    // Désérialiser le fichier
                     using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
                     {
                         BinaryFormatter formatter = new BinaryFormatter();
                         etatCuisine = (CuisineState)formatter.Deserialize(fs);
                     }
 
-                    // Appliquer l'état chargé
                     zoneCuisine.Size = etatCuisine.CuisineSize;
                     zoneCuisineBaseSize = zoneCuisine.Size;
                     gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
 
-                    // Supprimer les meubles existants
                     List<Control> controlsASupprimer = new List<Control>();
                     foreach (Control ctrl in cuisinePanel.Controls)
                     {
@@ -1116,7 +1091,6 @@ namespace CookCuisine
                         ctrl.Dispose();
                     }
 
-                    // Recréer les meubles sauvegardés
                     foreach (var meubleState in etatCuisine.Meubles)
                     {
                         if (meubles.TryGetValue(meubleState.Type, out var properties) &&
@@ -1138,11 +1112,7 @@ namespace CookCuisine
                             SetupButton(newButton);
                             cuisinePanel.Controls.Add(newButton);
                             newButton.BringToFront();
-
-                            // Mettre à jour le dictionnaire de positions
                             meublesPositions[newButton.Name] = meubleState.Position;
-
-                            // Si vous avez implémenté la rotation, l'appliquer ici
                         }
                     }
 
@@ -1161,14 +1131,11 @@ namespace CookCuisine
             {
                 Size newSize = new Size(newWidth,newHeight);
                 this.zoneCuisine.Size = newSize;
-                // Mettre à jour la position du gripItem
                 gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
                 zoneCuisineBaseSize = zoneCuisine.Size;
                 menuBar.Focus();
             }
         }
-
-        // On vérifie si la saisie est un entier avant d'appliquer
         private void width_texbox_Textchanged(object sender, EventArgs e)
         {
             if (!int.TryParse(width_texbox.Text, out _))
@@ -1186,6 +1153,7 @@ namespace CookCuisine
             }
         }
     }
+
     // Classe pour représenter un meuble
     public class Meuble
     {
@@ -1194,13 +1162,13 @@ namespace CookCuisine
         public Size Size { get; set; }
         public Point Location { get; set; }
         public string ImageName { get; set; }
-        public Meuble (String type_m, string text, Size size, Point location, string imageName) //  Constructeur
+        public Meuble (String type_m, string text, Size size, Point location, string imageName)
         {
-            this.Type = type_m; // Type de meuble
-            Text = text; // Texte du meuble
-            Size = size; // Taille du meuble
-            Location = location; // Position du meuble
-            ImageName = imageName; // Nom de l'image du meuble
+            this.Type = type_m; 
+            Text = text; 
+            Size = size; 
+            Location = location; 
+            ImageName = imageName; 
         }
     };
 
