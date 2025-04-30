@@ -33,6 +33,7 @@ namespace CookCuisine
         }
 
         // Variables et objets utiles
+        private Point startDragPosition;
         private int buttonCounter = 1;
         private bool isDragging = false;
         private Button draggedButton;
@@ -48,9 +49,7 @@ namespace CookCuisine
         {
             new CategorieMeuble("Chaises", new Size(60, 80), "chaises_modele.jpg"),
             new CategorieMeuble("Tables", new Size(120, 70), "table.png"),
-            //new CategorieMeuble("Canapés", new Size(80, 120), "canape_blanc.png"),
             //new CategorieMeuble("Microondes", new Size(80, 120), "microondes_modele.jpg"),
-            //new CategorieMeuble("Plan_de_travail", new Size(80, 120), ""),
             new CategorieMeuble("Armoires", new Size(80, 120), "armoires_modele.jpg"),
             new CategorieMeuble("Eviers", new Size(80, 120), "evier_00.png"),
             new CategorieMeuble("Cuisinières", new Size(80, 76), "cuisiniere_abc.png"),
@@ -66,7 +65,6 @@ namespace CookCuisine
             {"Chaise", new Meuble("Chaises", "Chaise", new Size(60, 80), new Point(20, 20), "chair.png")},
             {"Chaise2", new Meuble("Chaises", "Chaise", new Size(60, 80), new Point(20, 20), "chaises_modele.jpg")},
             {"Table", new Meuble("Tables", "Table", new Size(120, 70), new Point(20, 20), "table.png")},
-            //{"sofa", new Meuble("Canapés", "sofa", new Size(150, 80), new Point(20, 20), "sofa.png")},
             {"Armoire", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
             {"Armoire2", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
             {"Armoire3", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
@@ -78,8 +76,7 @@ namespace CookCuisine
             {"Tiroirs", new Meuble("Tiroirs", "Tiroirs", new Size(73, 41), new Point(20, 20), "commode.png")},
             {"Frigo 1", new Meuble("Frigos", "Frigos", new Size(80, 80), new Point(20, 20), "frigo_modele.jpg")},
             {"Plan de travail 1", new Meuble("Plan de travail", "Plan de travail", new Size(150, 50), new Point(20, 20), "PlanTravail.png")},
-            {"cuisiniere_abc", new Meuble("Cuisinières", "cuisiniere_abc", new Size(80, 76), new Point(20, 20), "cuisiniere_abc.png")},
-            //{"Canape_blanc", new Meuble("Canapés", "Canape_blanc", new Size(158, 86), new Point(20, 20), "canape_blanc.png")}
+            {"cuisiniere_abc", new Meuble("Cuisinières", "cuisiniere_abc", new Size(80, 76), new Point(20, 20), "cuisiniere_abc.png")}
         };
 
         // Dictionnaire pour stocker les images de meubles chargées
@@ -122,11 +119,14 @@ namespace CookCuisine
             // On abonne les texbox de dimension de la cuisine aux évènements nécéssaires
             width_texbox.KeyDown += textBoxDimension_KeyDown;
             height_texbox.KeyDown += textBoxDimension_KeyDown;
-            width_texbox.Leave += textBoxDimension_Leave;
-            height_texbox.Leave += textBoxDimension_Leave;
+            width_texbox.LostFocus += textBoxDimension_Leave;
+            height_texbox.LostFocus += textBoxDimension_Leave;
             // Evènement pour vérifier la saisie avant d'appliquer*
             width_texbox.TextChanged += width_texbox_Textchanged;
             height_texbox.TextChanged += height_texbox_Textchanged;
+            // Abonnement aux evennements undo et redo
+            undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
+            redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
         }
 
         private void Width_texbox_MouseDown(object sender, MouseEventArgs e)
@@ -282,7 +282,7 @@ namespace CookCuisine
             this.width_label.Name = "width_label";
             this.width_label.ReadOnly = true;
             this.width_label.Size = new System.Drawing.Size(15, 32);
-            this.width_label.Text = "w";
+            this.width_label.Text = "L";
             // 
             // width_texbox
             // 
@@ -303,7 +303,7 @@ namespace CookCuisine
             this.height_label.Name = "height_label";
             this.height_label.ReadOnly = true;
             this.height_label.Size = new System.Drawing.Size(15, 32);
-            this.height_label.Text = "h";
+            this.height_label.Text = "H";
             // 
             // height_texbox
             // 
@@ -391,6 +391,7 @@ namespace CookCuisine
             this.zoneCuisine.Location = new System.Drawing.Point(8, 8);
             this.zoneCuisine.Margin = new System.Windows.Forms.Padding(8);
             this.zoneCuisine.MaximumSize = new System.Drawing.Size(734, 542);
+            this.zoneCuisine.MinimumSize = new System.Drawing.Size(50, 50);
             this.zoneCuisine.Name = "zoneCuisine";
             this.zoneCuisine.Size = new System.Drawing.Size(467, 361);
             this.zoneCuisine.TabIndex = 1;
@@ -445,7 +446,11 @@ namespace CookCuisine
 
                 lastMousePos = currentMousePos;
                 zoneCuisine.Size = new Size(newWidth, newHeight);
-                zoneCuisineBaseSize = new Size(newWidth, newHeight);
+                var (ratioZC_W, ratioZC_H) = GetCuisineResizeRatios();
+                zoneCuisineBaseSize = new Size(
+                        (int)Math.Round(zoneCuisine.Width / ratioZC_W),
+                         (int)Math.Round(zoneCuisine.Height / ratioZC_H)
+                );
                 gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
             }
         }
@@ -468,6 +473,8 @@ namespace CookCuisine
         // Méthode pour réagir au redimensionnement de la fenêtre
         private void principalForm_Resize(object sender, EventArgs e)
         {
+            // Bien positionner les éléments de la barre de menu
+            undoToolStripMenuItem.Margin = new Padding((int)menuFLPanel.Width / 11, 0, 0, 0);
             // Mettre à jour la taille de searchPanel et meublesPanel 
             searchPanel.Width = meubleFLPanel.Width - 20; // marges de 20
             searchPanel.Height = Math.Min((int)(meubleFLPanel.Height / 22.56),35); // hauteur max de 35
@@ -485,26 +492,32 @@ namespace CookCuisine
             height_texbox.Font = new Font("Segoe UI Semibold", Math.Min(menuFLPanel.Height / 4.33f, 12));
             width_texbox.Size = new Size((int)(menuFLPanel.Width / 18), menuFLPanel.Height - 10);
             height_texbox.Size = new Size((int)(menuFLPanel.Width / 18), menuFLPanel.Height - 10);
+
             // Calculons le ratio de redimentionnement dans la zone de cuisine
             var (ratioZC_W, ratioZC_H) = GetCuisineResizeRatios();
-            //Console.WriteLine($"{ratioZC_W} ... {ratioZC_H} + ************ + {(int)Math.Round(ratioZC_W)} ... {(int)ratioZC_H}");
+            Console.WriteLine($"{ratioZC_W} ... {ratioZC_H} + ************ + {(int)Math.Round(ratioZC_W)} ... {(int)ratioZC_H}");
 
             // Redimentionner zoneCuisine et mettre à jour sa taille maximale
+            int zoneCUisineW = (int)Math.Round(zoneCuisineBaseSize.Width * ratioZC_W);
+            int zoneCUisineH = (int)Math.Round(zoneCuisineBaseSize.Height * ratioZC_H);
             zoneCuisine.MaximumSize = new Size(  // Ici on ajuste la taille max pour la zoneCuisine
                 (int)Math.Round(cuisinePanel.Width - 2 * zoneCuisineBaseLocation.X * ratioZC_W),
                 (int)Math.Round(cuisinePanel.Height - 2 * zoneCuisineBaseLocation.Y * ratioZC_H)
             );
-            zoneCuisine.Size = new Size(
-                (int)Math.Round(zoneCuisineBaseSize.Width * ratioZC_W),
-                (int)Math.Round(zoneCuisineBaseSize.Height * ratioZC_H)
-            );
+            //Console.WriteLine("Zone cuisine max Size :" + zoneCuisine.MaximumSize);
+            zoneCuisine.Size = new Size(zoneCUisineW, zoneCUisineH); // On met à jour la taille
+            //Console.WriteLine("Zone cuisine apres :" + zoneCuisine.Size);
             zoneCuisine.Location = new Point((int)(zoneCuisineBaseLocation.X*ratioZC_W), (int)(zoneCuisineBaseLocation.Y*ratioZC_H));
+
             // Mettre à jour la position du gripItem (carré pour redimentionner la cuisine)
             gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
+
             // Redimentionner les boutons de categorie de meubles
             ResizeCategoriesMeubles();
+
             // Redimentionner les boutons d'ajout de meubles
             ResizeFurnitureButtons();
+
             // Redimentionner les meubles selon la taille de la fenetre
             ResizeFurniture(ratioZC_W,ratioZC_H);
         }
@@ -622,10 +635,10 @@ namespace CookCuisine
             meublesPanel.AutoScroll = true;
             meublesPanel.VerticalScroll.Enabled = true;
             meublesPanel.VerticalScroll.Visible = true;
-            int yPosition = 10;
+            int yPosition = 8;
             int xPosition = meublesPanel.Width / 20;
-            int buttonHeight = (meublesPanel.Height - 40) / 10;
-            int buttonWidth = meublesPanel.Width - (2 * xPosition);
+            int buttonHeight = (int) Math.Round( (float)meublesPanel.Height / 10.81);
+            int buttonWidth = meublesPanel.Width - (2 * xPosition +10);
 
             foreach (var categorie in categoriesMeubles.OrderBy(m => m.Type))
             {
@@ -637,7 +650,7 @@ namespace CookCuisine
                     Location = new Point(xPosition, yPosition),
                     Size = new Size(buttonWidth, buttonHeight),
                     Tag = categorie.Type,
-                    Font = new Font("Arial", Math.Min(buttonHeight * 0.175f, 11)),
+                    Font = new Font("Arial", Math.Min(buttonHeight * 0.170f, 11)),
                     Image = new Bitmap(image, new Size(buttonHeight, buttonHeight)),
                     TextImageRelation = TextImageRelation.ImageBeforeText,
                     TextAlign = ContentAlignment.MiddleCenter,
@@ -645,7 +658,7 @@ namespace CookCuisine
                 };
                 meubleCatBtn.Click += (sender, e) => CreateAddFurnitureButtons(categorie.Type);
                 meublesPanel.Controls.Add(meubleCatBtn);
-                yPosition += meubleCatBtn.Height + meubleCatBtn.Height / 5;
+                yPosition += meubleCatBtn.Height + meubleCatBtn.Height / 6;
             }
             meublesPanel.AutoScrollMinSize = new Size(0, yPosition);
         }
@@ -653,10 +666,10 @@ namespace CookCuisine
         // Méthode pour redimentionner les boutons de categorie d'image
         private void ResizeCategoriesMeubles()
         {
-            int yPosition = 10;
+            int yPosition = 8;
             int xPosition = meublesPanel.Width / 20;
-            int buttonHeight = (meublesPanel.Height - 40) / 10;
-            int buttonWidth = meublesPanel.Width - (2 * xPosition);
+            int buttonHeight = (int)Math.Round((float)meublesPanel.Height / 10.81);
+            int buttonWidth = meublesPanel.Width - (2 * xPosition + 10);
 
             foreach (Control ctrl in meublesPanel.Controls)
             {
@@ -664,7 +677,7 @@ namespace CookCuisine
                 {
                     btn.Size = new Size(buttonWidth, buttonHeight);
                     btn.Location = new Point(xPosition, yPosition);
-                    float newFontSize = Math.Min(btn.Height * 0.175f, 11);
+                    float newFontSize = Math.Min(btn.Height * 0.170f, 11);
                     btn.Font = new Font(btn.Font.FontFamily, newFontSize, FontStyle.Regular);
                     btn.Image = ResizeImage(catMeubleImages[(string)btn.Tag], new Size(btn.Height, btn.Height));
                     btn.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -688,7 +701,7 @@ namespace CookCuisine
             int yPosition = 10;
             int xPosition = meublesPanel.Width / 20;
             int buttonHeight = (meublesPanel.Height - 40) / 10;
-            int buttonWidth = meublesPanel.Width - (2*xPosition + 15);
+            int buttonWidth = meublesPanel.Width - (2*xPosition + 10);
 
             foreach (var meuble in meubles.OrderBy(m => m.Key))
             {
@@ -702,7 +715,7 @@ namespace CookCuisine
                         Location = new Point(xPosition, yPosition),
                         Size = new Size(buttonWidth, buttonHeight),
                         Tag = meuble.Key,
-                        Font = new Font("Arial", Math.Min(buttonHeight * 0.175f, 11)),
+                        Font = new Font("Arial", Math.Min(buttonHeight * 0.170f, 11)),
                         Image = new Bitmap(image, new Size(buttonHeight, buttonHeight)),
                         TextImageRelation = TextImageRelation.ImageBeforeText,
                         TextAlign = ContentAlignment.MiddleCenter,
@@ -722,7 +735,7 @@ namespace CookCuisine
             int yPosition = 10;
             int xPosition = meublesPanel.Width/20;
             int buttonHeight = (meublesPanel.Height - 40) / 10;
-            int buttonWidth = meublesPanel.Width - (2*xPosition + 15);
+            int buttonWidth = meublesPanel.Width - (2*xPosition + 10);
 
             foreach (Control ctrl in meublesPanel.Controls)
             {
@@ -731,10 +744,10 @@ namespace CookCuisine
                 }
                 else if (ctrl is Button btn && btn.Name.StartsWith("add_Button_"))
                 {
-                    btn.Size = new Size( buttonWidth, buttonHeight);
                     btn.Location = new Point(xPosition, yPosition);
+                    btn.Size = new Size( buttonWidth, buttonHeight);
                     // Ajuster taille police
-                    float newFontSize = Math.Min(btn.Height * 0.175f, 11);
+                    float newFontSize = Math.Min(btn.Height * 0.170f, 11);
                     btn.Font = new Font(btn.Font.FontFamily, newFontSize, FontStyle.Regular);
                     // Ajuster la taille de l'image du bouton
                     btn.Image = ResizeImage(meubleImages[(string)btn.Tag], new Size(btn.Height, btn.Height));
@@ -756,16 +769,18 @@ namespace CookCuisine
                     // Récupérer les dimensions et positions originales
                     Size originalSize = meubles[(string)btn.Tag].Size;
                     Point originalPosition = meublesPositions[btn.Name];
+                    Console.WriteLine("Location pas resize" + btn.Location);
 
                     // Calculer la nouvelle taille et position
                     int newWidth = Math.Max(10, (int)Math.Round(originalSize.Width * ratio_W));
                     int newHeight = Math.Max(10, (int)Math.Round(originalSize.Height * ratio_H));
-                    int newX = Math.Max(0, (int)Math.Round(originalPosition.X * ratio_W));
-                    int newY = Math.Max(0, (int)Math.Round(originalPosition.Y * ratio_H));
+                    int newX = (int)Math.Round(originalPosition.X * ratio_W);
+                    int newY = (int)Math.Round(originalPosition.Y * ratio_H);
 
                     // Appliquer les nouvelles dimensions et positions
-                    btn.Size = new Size(newWidth, newHeight);
                     btn.Location = new Point(newX, newY);
+                    btn.Size = new Size(newWidth, newHeight);
+                    Console.WriteLine("Location resize" + btn.Location);
 
                     // Ajuster l'image du meuble pour correspondre à la nouvelle taille
                     btn.Image = ResizeImage(meubleImages[(string)btn.Tag], btn.Size);
@@ -775,6 +790,41 @@ namespace CookCuisine
                 }
             }
         }
+
+
+        // Méthode pour générer le meuble dans la zone de cuisine
+        public void createMeuble(string meubleType, out Button newButton)
+        {
+            newButton = null;
+            var (ratioZC_W, ratioZC_H) = GetCuisineResizeRatios();
+
+            if (meubles.TryGetValue(meubleType, out var properties) &&
+                meubleImages.TryGetValue(meubleType, out var image))
+            {
+                Size b_size = new Size((int)Math.Round(properties.Size.Width * ratioZC_W), (int)Math.Round(properties.Size.Height * ratioZC_H));
+                Point b_position = new Point((int)Math.Round(properties.Location.X * ratioZC_W), (int)Math.Round(properties.Location.Y * ratioZC_H));
+                Image resizedImage = new Bitmap(image, b_size);
+
+                newButton = new Button
+                {
+                    Name = "btn_" + meubleType + "_" + (buttonCounter++),
+                    Text = "",
+                    Location = b_position,
+                    Size = b_size,
+                    FlatStyle = FlatStyle.Flat,
+                    Tag = meubleType,
+                    Image = resizedImage,
+                    BackgroundImageLayout = ImageLayout.Stretch,
+                    BackColor = Color.Transparent
+                };
+
+                meublesPositions[newButton.Name] = properties.Location;
+                SetupButton(newButton);
+                cuisinePanel.Controls.Add(newButton);
+                newButton.BringToFront();
+            }
+        }
+
 
         // Méthode pour redimentionner nos images proprement
         public static Bitmap ResizeImage(Image image, Size newSize)
@@ -797,38 +847,11 @@ namespace CookCuisine
         {
             Button addButton = (Button)sender;
             string meubleType = (string)addButton.Tag;
-            var (ratioZC_W, ratioZC_H) =  GetCuisineResizeRatios();
-            createMeuble(meubleType,ratioZC_W,ratioZC_H);
-        }
 
-        // Méthode pour générer le meuble
-        private void createMeuble(string meubleType, float ratio_W, float ratio_H)
-        {
-            if (meubles.TryGetValue(meubleType, out var properties) &&
-                meubleImages.TryGetValue(meubleType, out var image))
-            {
-                Size b_size = new Size((int)Math.Round(properties.Size.Width * ratio_W), (int)Math.Round(properties.Size.Height * ratio_H));
-                Point b_position = new Point((int)Math.Round(properties.Location.X*ratio_W), (int)Math.Round(properties.Location.Y*ratio_H));
-                Image resizedImage = new Bitmap(image, b_size);
-                Button newButton = new Button
-                {
-                    Name = "btn_" + meubleType + "_" + (buttonCounter++),
-                    Text = "",
-                    Size = b_size,
-                    Location = b_position,
-                    FlatStyle = FlatStyle.Flat,
-                    Tag = meubleType,
-                    Image = resizedImage,
-                    BackgroundImageLayout = ImageLayout.Stretch,         
-                    BackColor = Color.Transparent
-                };
-                meublesPositions[newButton.Name] = b_position;
-                Console.WriteLine(meublesPositions[newButton.Name]);
-
-                SetupButton(newButton);
-                this.cuisinePanel.Controls.Add(newButton);
-                newButton.BringToFront();
-            }
+            var cmd = new AddMeubleCommand(this, meubleType);
+            cmd.Execute();
+            undoStack.Push(cmd);
+            redoStack.Clear();
         }
 
         private void SetupButton(Button btn)
@@ -860,6 +883,7 @@ namespace CookCuisine
                 offset = e.Location;
                 draggedButton.Capture = true;
                 draggedButton.BringToFront();
+                startDragPosition = draggedButton.Location;
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -872,20 +896,36 @@ namespace CookCuisine
             isDragging = false;
             if (draggedButton != null)
             {
-                draggedButton.Capture = false;
+                Point endPos = draggedButton.Location;
+                if (endPos != startDragPosition)
+                {
+                    // On annule l'action manuelle : on remet à l'état initial
+                    draggedButton.Location = startDragPosition;
+                    meublesPositions[draggedButton.Name] = startDragPosition;
+                    // on enregistre une commande pour faire le déplacement
+                    var cmd = new MoveMeubleCommand(draggedButton, startDragPosition, endPos, meublesPositions);
+                    cmd.Execute();
+                    undoStack.Push(cmd);
+                    redoStack.Clear();
+                }
                 draggedButton = null;
             }
         }
+
 
         // Méthode pour déplacer le meuble
         private void Button_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging && draggedButton != null)
             {
+                var (ratioX, ratioY) = GetCuisineResizeRatios();
                 Point mousePosInZone = cuisinePanel.PointToClient(Control.MousePosition);
                 Point newLocation = new Point(mousePosInZone.X - offset.X, mousePosInZone.Y - offset.Y);
                 draggedButton.Location = newLocation;
-                meublesPositions[draggedButton.Name] = newLocation;
+                meublesPositions[draggedButton.Name] = new Point(
+                    (int) Math.Round(newLocation.X / ratioX),
+                     (int)Math.Round(newLocation.Y / ratioY)
+                );
                 checkMeubleDansCuisine(draggedButton);
             }
         }
@@ -916,18 +956,10 @@ namespace CookCuisine
         // Méthode pour la rotation
         private void RotateButton(Button btn)
         {
-            Image originalImage = btn.Image;
-            Bitmap rotatedImage = new Bitmap(originalImage.Height, originalImage.Width);
-            using (Graphics g = Graphics.FromImage(rotatedImage))
-            {
-                g.TranslateTransform(rotatedImage.Width / 2, rotatedImage.Height / 2);
-                g.RotateTransform(90);
-                g.TranslateTransform(-originalImage.Width / 2, -originalImage.Height / 2);
-                g.DrawImage(originalImage, Point.Empty);
-            }
-
-            btn.Size = new Size(btn.Height, btn.Width);
-            btn.Image = rotatedImage;
+            var cmd = new RotateMeubleCommand(btn);
+            cmd.Execute();
+            undoStack.Push(cmd);
+            redoStack.Clear();
         }
 
         // Méthode pour dupliquer le meuble
@@ -958,14 +990,17 @@ namespace CookCuisine
         private void DeleteButton(Button btn)
         {
             DialogResult result = MessageBox.Show("Supprimer ce meuble ?", "Confirmation",
-                MessageBoxButtons.YesNo,MessageBoxIcon.Question);
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
-                this.Controls.Remove(btn);
-                btn.Dispose();
+                var cmd = new DeleteMeubleCommand(this, btn);
+                cmd.Execute();
+                undoStack.Push(cmd);
+                redoStack.Clear();
             }
         }
+
 
         // Bouton pour quitter l'application
         private void quitter_Click(object sender, EventArgs e)
@@ -1001,11 +1036,28 @@ namespace CookCuisine
             {
                 if (int.TryParse(width_texbox.Text, out int newWidth) && int.TryParse(height_texbox.Text, out int newHeight))
                 {
-                    Size newSize = new Size(newWidth, newHeight);
-                    this.zoneCuisine.Size = newSize;
-                    gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
-                    zoneCuisineBaseSize = zoneCuisine.Size;
-                    menuBar.Focus();
+                    if (newWidth < 50 || newHeight < 50)
+                    {
+                        MessageBox.Show("La taille minimale de la cuisine est de 50x50 cm.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ((ToolStripTextBox)sender).Focus(); // Focus su l'element qui active cette methode
+                        return;
+                    }
+                    else if (newWidth > 734 || newHeight > 542)
+                    {
+                        MessageBox.Show("La taille maximale de la cuisine est de 734*542 cm.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else
+                    {
+                        var (ratioZC_W, ratioZC_H) = GetCuisineResizeRatios();
+                        this.zoneCuisine.Size = new Size(
+                            (int)Math.Round(newWidth * ratioZC_W),
+                            (int)Math.Round(newHeight * ratioZC_H)
+                        );
+                        gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
+                        zoneCuisineBaseSize = new Size(newWidth, newHeight);
+                        menuBar.Focus();
+                    }
                 }
             }
         }
@@ -1074,7 +1126,11 @@ namespace CookCuisine
                     }
 
                     zoneCuisine.Size = etatCuisine.CuisineSize;
-                    zoneCuisineBaseSize = zoneCuisine.Size;
+                    var (ratioZC_W, ratioZC_H) = GetCuisineResizeRatios();
+                    zoneCuisineBaseSize = new Size(
+                            (int)Math.Round(zoneCuisine.Width / ratioZC_W),
+                            (int)Math.Round(zoneCuisine.Height / ratioZC_H)
+                    );
                     gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
 
                     List<Control> controlsASupprimer = new List<Control>();
@@ -1129,11 +1185,28 @@ namespace CookCuisine
         {
             if (int.TryParse(width_texbox.Text, out int newWidth) && int.TryParse(height_texbox.Text, out int newHeight))
             {
-                Size newSize = new Size(newWidth,newHeight);
-                this.zoneCuisine.Size = newSize;
-                gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
-                zoneCuisineBaseSize = zoneCuisine.Size;
-                menuBar.Focus();
+                if (newWidth < 50 || newHeight < 50)
+                {
+                    MessageBox.Show("La taille minimale de la cuisine est de 50x50 cm.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ((ToolStripTextBox)sender).Focus(); // Focus su l'element qui active cette methode
+                    return;
+                }
+                else if (newWidth > 734 || newHeight > 542)
+                {
+                    MessageBox.Show("La taille maximale de la cuisine est de 734*542 cm.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                else
+                {
+                    var (ratioZC_W, ratioZC_H) = GetCuisineResizeRatios();
+                    this.zoneCuisine.Size = new Size(
+                        (int)Math.Round(newWidth * ratioZC_W),
+                        (int)Math.Round(newHeight * ratioZC_H)
+                    );
+                    gripItem.Location = new Point(zoneCuisine.Width - gripItem.Width, zoneCuisine.Height - gripItem.Height);
+                    zoneCuisineBaseSize = new Size(newWidth, newHeight);
+                    menuBar.Focus();
+                }
             }
         }
         private void width_texbox_Textchanged(object sender, EventArgs e)
@@ -1152,6 +1225,201 @@ namespace CookCuisine
                height_texbox.SelectionStart = height_texbox.TextLength;
             }
         }
+
+        // Gestionnaire des raccourcis, undo, redo ... (ctrl+Z, ctrl+Y, ...)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.Z))
+            {
+                undoToolStripMenuItem_Click(null, null);
+                return true;
+            }
+            else if (keyData == (Keys.Control | Keys.Y))
+            {
+                redoToolStripMenuItem_Click(null, null);
+                return true;
+            }
+            else if (keyData != (Keys.Control | Keys.S))
+            {
+                // save lle fichier
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
+        // Interface (Pattern) pour gerer undo et redo
+        public interface ICommand
+        {
+            void Execute();
+            void Undo();
+        }
+
+        [Serializable]
+        // Commande pour gerer undo et redo sur l'ajout d'un meuble
+        public class AddMeubleCommand : ICommand
+        {
+            private principalForm form;
+            private string meubleType;
+            private Button meubleBtn;
+
+            public AddMeubleCommand(principalForm form, string meubleType)
+            {
+                this.form = form;
+                this.meubleType = meubleType;
+            }
+
+            public void Execute()
+            {
+                form.createMeuble(meubleType, out meubleBtn);
+            }
+
+            public void Undo()
+            {
+                if (meubleBtn != null)
+                {
+                    form.cuisinePanel.Controls.Remove(meubleBtn);
+                    meubleBtn.Dispose();
+                }
+            }
+        }
+
+        // Ajout des stack
+        private Stack<ICommand> undoStack = new Stack<ICommand>();
+        private Stack<ICommand> redoStack = new Stack<ICommand>();
+
+
+        // Commande pour gerer undo et redo sur le deplacemnt d'un meuble
+        [Serializable]
+        public class MoveMeubleCommand : ICommand
+        {
+            private Button meuble;
+            private Point oldPosition;
+            private Point newPosition;
+            private Dictionary<string, Point> meublesPositions;
+            public MoveMeubleCommand(Button meuble, Point oldPos, Point newPos, Dictionary<string, Point> meublesPositions)
+            {
+                this.meuble = meuble;
+                oldPosition = oldPos;
+                newPosition = newPos;
+                this.meublesPositions = meublesPositions;
+            }
+            public void Execute()
+            {
+                meuble.Location = newPosition;
+                meublesPositions[meuble.Name] = newPosition;
+            }
+            public void Undo()
+            {
+                meuble.Location = oldPosition;
+                meublesPositions[meuble.Name] = oldPosition;
+            }
+        }
+
+
+        // Commande pour gerer undo et redo sur la suppression d'un meuble
+        [Serializable]
+        public class DeleteMeubleCommand : ICommand
+        {
+            private principalForm form;
+            private Button meuble;
+            private string name;
+            private Point position;
+            private Size size;
+            private string tag;
+            private Image image;
+            public DeleteMeubleCommand(principalForm form, Button meuble)
+            {
+                this.form = form;
+                this.meuble = meuble;
+                this.name = meuble.Name;
+                this.position = meuble.Location;
+                this.size = meuble.Size;
+                this.tag = (string)meuble.Tag;
+                this.image = (Image)meuble.Image.Clone();
+            }
+            public void Execute()
+            {
+                form.cuisinePanel.Controls.Remove(meuble);
+            }
+            public void Undo()
+            {
+                Button restored = new Button
+                {
+                    Name = name,
+                    Location = position,
+                    Size = size,
+                    Tag = tag,
+                    Image = image,
+                    FlatStyle = FlatStyle.Flat,
+                    BackColor = Color.Transparent
+                };
+
+                form.SetupButton(restored);
+                form.cuisinePanel.Controls.Add(restored);
+                form.meublesPositions[name] = position;
+                meuble = restored;
+                meuble.BringToFront();
+            }
+        }
+
+        // Commande pour gerer undo et redo sur la rotation de meuble
+        [Serializable]
+        public class RotateMeubleCommand : ICommand
+        {
+            private Button meuble;
+            private Image oldImage;
+            private Size oldSize;
+            public RotateMeubleCommand(Button meuble)
+            {
+                this.meuble = meuble;
+                oldImage = (Image)meuble.Image.Clone();
+                oldSize = meuble.Size;
+            }
+            public void Execute()
+            {
+                Image img = meuble.Image;
+                Bitmap rotated = new Bitmap(img.Height, img.Width);
+                using (Graphics g = Graphics.FromImage(rotated))
+                {
+                    g.TranslateTransform(rotated.Width / 2, rotated.Height / 2);
+                    g.RotateTransform(90);
+                    g.TranslateTransform(-img.Width / 2, -img.Height / 2);
+                    g.DrawImage(img, Point.Empty);
+                }
+
+                meuble.Image = rotated;
+                meuble.Size = new Size(oldSize.Height, oldSize.Width);
+            }
+
+            public void Undo()
+            {
+                meuble.Image = oldImage;
+                meuble.Size = oldSize;
+            }
+        }
+
+        // Gestionnaire d'evennement du bouton undo
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (undoStack.Count > 0)
+            {
+                var cmd = undoStack.Pop();
+                cmd.Undo();
+                redoStack.Push(cmd);
+            }
+        }
+        // Gestionnaire d'evennement du bouton redo
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (redoStack.Count > 0)
+            {
+                var cmd = redoStack.Pop();
+                cmd.Execute();
+                undoStack.Push(cmd);
+            }
+        }
+
     }
 
     // Classe pour représenter un meuble
@@ -1184,4 +1452,5 @@ namespace CookCuisine
             ImageName = im;
         }
     }
+
 }
