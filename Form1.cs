@@ -89,6 +89,7 @@ namespace CookCuisine
         public principalForm()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.backButton.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "backBTN.png"));
             this.undoToolStripMenuItem.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "undo.png"));
             this.redoToolStripMenuItem.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Images", "redo.png"));
@@ -139,12 +140,10 @@ namespace CookCuisine
             this.mainTLPanel = new System.Windows.Forms.TableLayoutPanel();
             this.menuFLPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.menuBar = new System.Windows.Forms.MenuStrip();
-            this.fichier = new System.Windows.Forms.ToolStripMenuItem();
             this.load = new System.Windows.Forms.ToolStripMenuItem();
             this.save = new System.Windows.Forms.ToolStripMenuItem();
-            this.quitter = new System.Windows.Forms.ToolStripMenuItem();
-            this.edition = new System.Windows.Forms.ToolStripMenuItem();
             this.aide = new System.Windows.Forms.ToolStripMenuItem();
+            this.quitter = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.width_label = new System.Windows.Forms.ToolStripTextBox();
@@ -159,6 +158,7 @@ namespace CookCuisine
             this.cuisinePanel = new System.Windows.Forms.Panel();
             this.zoneCuisine = new System.Windows.Forms.Panel();
             this.gripItem = new System.Windows.Forms.Panel();
+            this.fichier = new System.Windows.Forms.ToolStripMenuItem();
             this.mainTLPanel.SuspendLayout();
             this.menuFLPanel.SuspendLayout();
             this.menuBar.SuspendLayout();
@@ -204,85 +204,81 @@ namespace CookCuisine
             this.menuBar.AutoSize = false;
             this.menuBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(201)))), ((int)(((byte)(170)))));
             this.menuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fichier,
-            this.edition,
-            this.aide,
-            this.undoToolStripMenuItem,
-            this.redoToolStripMenuItem,
-            this.width_label,
-            this.width_texbox,
-            this.height_label,
-            this.height_texbox});
+                this.load,
+                this.save,
+                this.aide,
+                this.quitter,
+                this.width_label,
+                this.width_texbox,
+                this.height_label,
+                this.height_texbox,
+                this.undoToolStripMenuItem,
+                this.redoToolStripMenuItem
+            });
             this.menuBar.Location = new System.Drawing.Point(0, 0);
             this.menuBar.Name = "menuBar";
             this.menuBar.Size = new System.Drawing.Size(900, 36);
             this.menuBar.TabIndex = 0;
-            // 
-            // fichier
-            // 
-            this.fichier.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.load,
-            this.save,
-            this.quitter});
-            this.fichier.Name = "fichier";
-            this.fichier.Size = new System.Drawing.Size(54, 32);
-            this.fichier.Text = "Fichier";
+
             // 
             // load
             // 
             this.load.Name = "load";
-            this.load.Size = new System.Drawing.Size(139, 22);
+            this.load.Size = new System.Drawing.Size(61, 32);
             this.load.Text = "Charger";
             this.load.Click += new System.EventHandler(this.load_Click);
             // 
             // save
             // 
             this.save.Name = "save";
-            this.save.Size = new System.Drawing.Size(139, 22);
+            this.save.Size = new System.Drawing.Size(84, 32);
             this.save.Text = "Sauvegarder";
             this.save.Click += new System.EventHandler(this.save_Click);
-            // 
-            // quitter
-            // 
-            this.quitter.Name = "quitter";
-            this.quitter.Size = new System.Drawing.Size(139, 22);
-            this.quitter.Text = "Quitter";
-            this.quitter.Click += new System.EventHandler(this.quitter_Click);
-            // 
-            // edition
-            // 
-            this.edition.Name = "edition";
-            this.edition.Size = new System.Drawing.Size(56, 32);
-            this.edition.Text = "Edition";
             // 
             // aide
             // 
             this.aide.Name = "aide";
             this.aide.Size = new System.Drawing.Size(43, 32);
             this.aide.Text = "Aide";
+            this.aide.Click += new System.EventHandler(this.aide_Click);
+            // 
+            // quitter
+            // 
+            this.quitter.Name = "quitter";
+            this.quitter.Size = new System.Drawing.Size(56, 32);
+            this.quitter.Text = "Quitter";
+            this.quitter.Click += new System.EventHandler(this.quitter_Click);
             // 
             // undoToolStripMenuItem
             // 
-            this.undoToolStripMenuItem.Margin = new System.Windows.Forms.Padding(80, 0, 0, 0);
+            this.undoToolStripMenuItem.Margin = new System.Windows.Forms.Padding(20, 0, 10, 0);
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(12, 32);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(28, 32);
+            //this.undoToolStripMenuItem.Alignment = ToolStripItemAlignment.Right;
+            this.undoToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Image; 
+            this.undoToolStripMenuItem.ToolTipText = "Annuler (Ctrl+Z)";
+
             // 
             // redoToolStripMenuItem
             // 
-            this.redoToolStripMenuItem.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            this.redoToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 0, 20, 0); 
             this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(12, 32);
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(28, 32); 
+            //this.redoToolStripMenuItem.Alignment = ToolStripItemAlignment.Right;
+            this.redoToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Image; 
+            this.redoToolStripMenuItem.ToolTipText = "Rétablir (Ctrl+Y)";
             // 
             // width_label
             // 
             this.width_label.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(201)))), ((int)(((byte)(170)))));
             this.width_label.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.width_label.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.width_label.Margin = new System.Windows.Forms.Padding(50, 0, 1, 0);
+            this.width_label.Margin = new System.Windows.Forms.Padding(150, 0, 1, 0);
             this.width_label.Name = "width_label";
             this.width_label.ReadOnly = true;
-            this.width_label.Size = new System.Drawing.Size(15, 32);
-            this.width_label.Text = "L";
+            this.width_label.Size = new System.Drawing.Size(120, 32);
+            this.width_label.Text = "Largeur (centimètres)";
+            this.width_label.Click += new System.EventHandler(this.width_label_Click);
             // 
             // width_texbox
             // 
@@ -290,6 +286,7 @@ namespace CookCuisine
             this.width_texbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.width_texbox.Font = new System.Drawing.Font("Segoe UI Semibold", 9F);
             this.width_texbox.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.width_label.Margin = new System.Windows.Forms.Padding(35, 0, 1, 0);
             this.width_texbox.Name = "width_texbox";
             this.width_texbox.Size = new System.Drawing.Size(50, 32);
             this.width_texbox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -302,8 +299,9 @@ namespace CookCuisine
             this.height_label.Margin = new System.Windows.Forms.Padding(20, 0, 1, 0);
             this.height_label.Name = "height_label";
             this.height_label.ReadOnly = true;
-            this.height_label.Size = new System.Drawing.Size(15, 32);
-            this.height_label.Text = "H";
+            this.height_label.Size = new System.Drawing.Size(120, 32);
+            this.height_label.Text = "Hauteur (centimètres)";
+            this.height_label.Click += new System.EventHandler(this.height_label_Click);
             // 
             // height_texbox
             // 
@@ -311,6 +309,7 @@ namespace CookCuisine
             this.height_texbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.height_texbox.Font = new System.Drawing.Font("Segoe UI Semibold", 9F);
             this.height_texbox.Name = "height_texbox";
+            this.height_texbox.ShortcutsEnabled = false;
             this.height_texbox.Size = new System.Drawing.Size(50, 32);
             this.height_texbox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -406,6 +405,11 @@ namespace CookCuisine
             this.gripItem.Size = new System.Drawing.Size(10, 10);
             this.gripItem.TabIndex = 0;
             // 
+            // fichier
+            // 
+            this.fichier.Name = "fichier";
+            this.fichier.Size = new System.Drawing.Size(32, 19);
+            // 
             // principalForm
             // 
             this.ClientSize = new System.Drawing.Size(900, 600);
@@ -414,6 +418,7 @@ namespace CookCuisine
             this.MainMenuStrip = this.menuBar;
             this.MinimumSize = new System.Drawing.Size(916, 639);
             this.Name = "principalForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CookCuisine";
             this.mainTLPanel.ResumeLayout(false);
             this.menuFLPanel.ResumeLayout(false);
@@ -1181,6 +1186,18 @@ namespace CookCuisine
             }
         }
 
+        private void aide_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                "Cliquez sur les différents meubles pour les faire apparaître dans votre cuisine. " +
+                "Vous pourrez ensuite les déplacer où bon vous semble à l'intérieur de celle-ci.\n\n" +
+                "Vous pouvez également modifier la taille de votre cuisine en bougeant son coin " +
+                "inférieur droit ou en modifiant les valeurs de la largeur et de la hauteur (en centimètres)",
+                "Aide",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
         private void textBoxDimension_Leave(object sender, EventArgs e)
         {
             if (int.TryParse(width_texbox.Text, out int newWidth) && int.TryParse(height_texbox.Text, out int newHeight))
@@ -1420,6 +1437,15 @@ namespace CookCuisine
             }
         }
 
+        private void width_label_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void height_label_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     // Classe pour représenter un meuble
