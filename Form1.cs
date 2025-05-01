@@ -62,20 +62,32 @@ namespace CookCuisine
         // Dictionnaire des meubles avec nom, taille et image
         private Dictionary<string, Meuble> meubles = new Dictionary<string, Meuble>()
         {
-            {"Chaise", new Meuble("Chaises", "Chaise", new Size(60, 80), new Point(20, 20), "chair.png")},
-            {"Chaise2", new Meuble("Chaises", "Chaise", new Size(60, 80), new Point(20, 20), "chaises_modele.jpg")},
-            {"Table", new Meuble("Tables", "Table", new Size(120, 70), new Point(20, 20), "table.png")},
+            //{"Chaise", new Meuble("Chaises", "Chaise", new Size(60, 80), new Point(20, 20), "chair.png")},
+            //{"Chaise2", new Meuble("Chaises", "Chaise", new Size(60, 80), new Point(20, 20), "chaises_modele.jpg")},
+            {"chaise_1", new Meuble("Chaises", "chaise_1", new Size(40, 49), new Point(20, 20), "chaise_1.png")},
+            {"chaise_2", new Meuble("Chaises", "chaise_2", new Size(38, 40), new Point(20, 20), "chaise_2.png")},
+            {"chaise_3", new Meuble("Chaises", "chaise_3", new Size(38, 44), new Point(20, 20), "chaise_3.png")},
+            {"chaise_4", new Meuble("Chaises", "chaise_4", new Size(48, 28), new Point(20, 20), "chaise_4.png")},
+            //{"Table", new Meuble("Tables", "Table", new Size(120, 70), new Point(20, 20), "table.png")},
+            {"table_1", new Meuble("Tables", "table_1", new Size(133, 91), new Point(20, 20), "table_1.png")},
+            {"table_2", new Meuble("Tables", "table_2", new Size(103, 128), new Point(20, 20), "table_2.png")},
+            {"table_3", new Meuble("Tables", "table_3", new Size(96, 52), new Point(20, 20), "table_3.png")},
             {"Armoire", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
-            {"Armoire2", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
-            {"Armoire3", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
-            {"Armoire4", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
-            {"Armoire5", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
-            {"Armoire6", new Meuble("Armoires", "Armoire", new Size(80, 120), new Point(20, 20), "armoires_modele.jpg")},
+            {"armoire_1", new Meuble("Armoires", "armoire_1", new Size(101, 77), new Point(20, 20), "armoire_1.png")},
+            {"armoire_2", new Meuble("Armoires", "armoire_2", new Size(125, 77), new Point(20, 20), "armoire_2.png")},
             {"Four", new Meuble("Fours", "Fours", new Size(80, 80), new Point(20, 20), "cuisinière_modele.jpg")},
             {"evier_00", new Meuble("Eviers", "evier_00", new Size(73, 41), new Point(20, 20), "evier_00.png")},
+            {"evier_1", new Meuble("Eviers", "evier_1", new Size(62, 38), new Point(20, 20), "evier_1.png")},
+            {"evier_2", new Meuble("Eviers", "evier_2", new Size(65, 41), new Point(20, 20), "evier_2.jpg")},
+            {"evier_3", new Meuble("Eviers", "evier_3", new Size(64, 44), new Point(20, 20), "evier_3.jpg")},
             {"Tiroirs", new Meuble("Tiroirs", "Tiroirs", new Size(73, 41), new Point(20, 20), "commode.png")},
-            {"Frigo 1", new Meuble("Frigos", "Frigos", new Size(80, 80), new Point(20, 20), "frigo_modele.jpg")},
-            {"Plan de travail 1", new Meuble("Plan de travail", "Plan de travail", new Size(150, 50), new Point(20, 20), "PlanTravail.png")},
+            //{"Frigo 1", new Meuble("Frigos", "Frigos", new Size(80, 80), new Point(20, 20), "frigo_modele.jpg")},
+            {"frigo_1", new Meuble("Frigos", "frigo_1", new Size(80, 80), new Point(20, 20), "frigo_1.png")},
+            {"frigo_2", new Meuble("Frigos", "frigo_2", new Size(80, 80), new Point(20, 20), "frigo_2.png")},
+            {"Plan de travail 1", new Meuble("Plan de travail", "Plan de travail", new Size(80, 40), new Point(20, 20), "PlanTravail.png")},
+            {"plan_de_travail_1", new Meuble("Plan de travail", "plan_de_travail_1", new Size(88, 47), new Point(20, 20), "plan_de_travail_1.jpg")},
+            {"plan_de_travail_2", new Meuble("Plan de travail", "plan_de_travail_2", new Size(80, 40), new Point(20, 20), "plan_de_travail_2.jpg")},
+            {"cuisiniere_1", new Meuble("Cuisinières", "cuisiniere_1", new Size(71, 41), new Point(20, 20), "cuisiniere_1.jpg")},
             {"cuisiniere_abc", new Meuble("Cuisinières", "cuisiniere_abc", new Size(80, 76), new Point(20, 20), "cuisiniere_abc.png")}
         };
 
@@ -144,12 +156,12 @@ namespace CookCuisine
             this.save = new System.Windows.Forms.ToolStripMenuItem();
             this.aide = new System.Windows.Forms.ToolStripMenuItem();
             this.quitter = new System.Windows.Forms.ToolStripMenuItem();
-            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.width_label = new System.Windows.Forms.ToolStripTextBox();
             this.width_texbox = new System.Windows.Forms.ToolStripTextBox();
             this.height_label = new System.Windows.Forms.ToolStripTextBox();
             this.height_texbox = new System.Windows.Forms.ToolStripTextBox();
+            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.meubleFLPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.searchPanel = new System.Windows.Forms.Panel();
             this.backButton = new System.Windows.Forms.Button();
@@ -204,22 +216,20 @@ namespace CookCuisine
             this.menuBar.AutoSize = false;
             this.menuBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(201)))), ((int)(((byte)(170)))));
             this.menuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                this.load,
-                this.save,
-                this.aide,
-                this.quitter,
-                this.width_label,
-                this.width_texbox,
-                this.height_label,
-                this.height_texbox,
-                this.undoToolStripMenuItem,
-                this.redoToolStripMenuItem
-            });
+            this.load,
+            this.save,
+            this.aide,
+            this.quitter,
+            this.width_label,
+            this.width_texbox,
+            this.height_label,
+            this.height_texbox,
+            this.undoToolStripMenuItem,
+            this.redoToolStripMenuItem});
             this.menuBar.Location = new System.Drawing.Point(0, 0);
             this.menuBar.Name = "menuBar";
             this.menuBar.Size = new System.Drawing.Size(900, 36);
             this.menuBar.TabIndex = 0;
-
             // 
             // load
             // 
@@ -249,35 +259,16 @@ namespace CookCuisine
             this.quitter.Text = "Quitter";
             this.quitter.Click += new System.EventHandler(this.quitter_Click);
             // 
-            // undoToolStripMenuItem
-            // 
-            this.undoToolStripMenuItem.Margin = new System.Windows.Forms.Padding(20, 0, 10, 0);
-            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(28, 32);
-            //this.undoToolStripMenuItem.Alignment = ToolStripItemAlignment.Right;
-            this.undoToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Image; 
-            this.undoToolStripMenuItem.ToolTipText = "Annuler (Ctrl+Z)";
-
-            // 
-            // redoToolStripMenuItem
-            // 
-            this.redoToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 0, 20, 0); 
-            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(28, 32); 
-            //this.redoToolStripMenuItem.Alignment = ToolStripItemAlignment.Right;
-            this.redoToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Image; 
-            this.redoToolStripMenuItem.ToolTipText = "Rétablir (Ctrl+Y)";
-            // 
             // width_label
             // 
             this.width_label.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(201)))), ((int)(((byte)(170)))));
             this.width_label.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.width_label.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.width_label.Margin = new System.Windows.Forms.Padding(150, 0, 1, 0);
+            this.width_label.Margin = new System.Windows.Forms.Padding(50, 0, 1, 0);
             this.width_label.Name = "width_label";
             this.width_label.ReadOnly = true;
-            this.width_label.Size = new System.Drawing.Size(120, 32);
-            this.width_label.Text = "Largeur (centimètres)";
+            this.width_label.Size = new System.Drawing.Size(90, 32);
+            this.width_label.Text = "Largeur (cm)";
             this.width_label.Click += new System.EventHandler(this.width_label_Click);
             // 
             // width_texbox
@@ -286,7 +277,6 @@ namespace CookCuisine
             this.width_texbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.width_texbox.Font = new System.Drawing.Font("Segoe UI Semibold", 9F);
             this.width_texbox.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.width_label.Margin = new System.Windows.Forms.Padding(35, 0, 1, 0);
             this.width_texbox.Name = "width_texbox";
             this.width_texbox.Size = new System.Drawing.Size(50, 32);
             this.width_texbox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -299,8 +289,8 @@ namespace CookCuisine
             this.height_label.Margin = new System.Windows.Forms.Padding(20, 0, 1, 0);
             this.height_label.Name = "height_label";
             this.height_label.ReadOnly = true;
-            this.height_label.Size = new System.Drawing.Size(120, 32);
-            this.height_label.Text = "Hauteur (centimètres)";
+            this.height_label.Size = new System.Drawing.Size(90, 32);
+            this.height_label.Text = "Hauteur (cm)";
             this.height_label.Click += new System.EventHandler(this.height_label_Click);
             // 
             // height_texbox
@@ -312,6 +302,22 @@ namespace CookCuisine
             this.height_texbox.ShortcutsEnabled = false;
             this.height_texbox.Size = new System.Drawing.Size(50, 32);
             this.height_texbox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // undoToolStripMenuItem
+            // 
+            this.undoToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.undoToolStripMenuItem.Margin = new System.Windows.Forms.Padding(30, 0, 10, 0);
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(12, 32);
+            this.undoToolStripMenuItem.ToolTipText = "Annuler (Ctrl+Z)";
+            // 
+            // redoToolStripMenuItem
+            // 
+            this.redoToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.redoToolStripMenuItem.Margin = new System.Windows.Forms.Padding(10, 0, 20, 0);
+            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(12, 32);
+            this.redoToolStripMenuItem.ToolTipText = "Rétablir (Ctrl+Y)";
             // 
             // meubleFLPanel
             // 
@@ -479,7 +485,8 @@ namespace CookCuisine
         private void principalForm_Resize(object sender, EventArgs e)
         {
             // Bien positionner les éléments de la barre de menu
-            undoToolStripMenuItem.Margin = new Padding((int)menuFLPanel.Width / 11, 0, 0, 0);
+            width_label.Margin = new Padding((int)menuFLPanel.Width / 18, 0, 1, 0);
+            undoToolStripMenuItem.Margin = new Padding((int)menuFLPanel.Width / 30, 0, 10, 0);
             // Mettre à jour la taille de searchPanel et meublesPanel 
             searchPanel.Width = meubleFLPanel.Width - 20; // marges de 20
             searchPanel.Height = Math.Min((int)(meubleFLPanel.Height / 22.56),35); // hauteur max de 35
@@ -1192,7 +1199,8 @@ namespace CookCuisine
                 "Cliquez sur les différents meubles pour les faire apparaître dans votre cuisine. " +
                 "Vous pourrez ensuite les déplacer où bon vous semble à l'intérieur de celle-ci.\n\n" +
                 "Vous pouvez également modifier la taille de votre cuisine en bougeant son coin " +
-                "inférieur droit ou en modifiant les valeurs de la largeur et de la hauteur (en centimètres)",
+                "inférieur droit ou en modifiant les valeurs de la largeur et de la hauteur (en centimètres).\n\n" +
+                "Le bouton sauvegarger vous permet d'enregistrer votre plan et le bouton charger vous permet de charger des précédents plans sur lesquels vous avez travaillé.",
                 "Aide",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
